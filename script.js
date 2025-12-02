@@ -57,7 +57,10 @@ function processSave(xml) {
 
   buildTable(fullNPCList);
   setupFilters();
+
+  // Show table + filters once data is ready
   document.getElementById("npcTable").style.display = "table";
+  document.getElementById("filters").style.display = "block";
 }
 
 
@@ -106,7 +109,7 @@ function extractNPC(npc, curYear) {
 
 
 //--------------------------------------------------
-// BUILD TABLE WITH SORT ICONS + STYLING
+// BUILD TABLE WITH SORT ICONS
 //--------------------------------------------------
 
 function buildTable(data) {
@@ -120,13 +123,14 @@ function buildTable(data) {
 
   const columns = Object.keys(data[0]);
 
+  // HEADERS
   columns.forEach(col => {
     const th = document.createElement("th");
 
     let html = `<span>${col}</span>`;
 
     if (col === currentSortColumn) {
-      th.classList.add("sorted");
+      th.style.background = "#e6f0ff";
 
       if (currentSortDirection === 1) {
         html += `<svg width="10" height="10" style="margin-left:4px;"><polygon points="5,1 9,9 1,9" fill="black"/></svg>`;
@@ -141,15 +145,14 @@ function buildTable(data) {
     headerRow.appendChild(th);
   });
 
+  // ROWS
   data.forEach(npc => {
     const tr = document.createElement("tr");
-
     columns.forEach(col => {
       const td = document.createElement("td");
       td.textContent = npc[col] ?? "";
       tr.appendChild(td);
     });
-
     body.appendChild(tr);
   });
 }
@@ -174,7 +177,7 @@ function sortBy(data, key) {
 
 
 //--------------------------------------------------
-// FILTERING SYSTEM
+// FILTERING SYSTEM (UPDATED)
 //--------------------------------------------------
 
 function setupFilters() {
@@ -182,6 +185,7 @@ function setupFilters() {
   document.getElementById("genderFilter").addEventListener("change", applyFilters);
   document.getElementById("minAge").addEventListener("input", applyFilters);
   document.getElementById("maxAge").addEventListener("input", applyFilters);
+  document.getElementById("likeFilter").addEventListener("input", applyFilters); // ⭐ NEW
 }
 
 function applyFilters() {
@@ -189,12 +193,23 @@ function applyFilters() {
   const gender = document.getElementById("genderFilter").value;
   const minAge = parseInt(document.getElementById("minAge").value);
   const maxAge = parseInt(document.getElementById("maxAge").value);
+  const likeFilter = document.getElementById("likeFilter").value.toLowerCase(); // ⭐ NEW
 
   let filtered = fullNPCList.filter(npc => {
+
+    // Global text search
     if (search && !JSON.stringify(npc).toLowerCase().includes(search)) return false;
+
+    // Gender
     if (gender && npc.Gender !== gender) return false;
+
+    // Age range
     if (!isNaN(minAge) && npc.Age < minAge) return false;
     if (!isNaN(maxAge) && npc.Age > maxAge) return false;
+
+    // ⭐ NEW: liked item contains X
+    if (likeFilter && !npc.LikedItems.toLowerCase().includes(likeFilter)) return false;
+
     return true;
   });
 
