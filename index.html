@@ -2,22 +2,90 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Kynseed Save File Viewer</title>
+  <title>Kynseed NPC Viewer</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 6px 8px; }
-    th { cursor: pointer; background: #f2f2f2; }
-    #upload { margin-top: 10px; }
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+      background: #fafafa;
+    }
+
+    h1 { 
+      margin-bottom: 20px; 
+    }
+
+    table { 
+      border-collapse: collapse; 
+      width: 100%; 
+      margin-top: 20px;
+      background: white;
+    }
+
+    th, td { 
+      border: 1px solid #ccc; 
+      padding: 6px 10px; 
+      text-align: left;
+    }
+
+    th { 
+      cursor: pointer; 
+      background: #f2f2f2; 
+    }
+
+    #filters input, 
+    #filters select {
+      padding: 6px;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
 
 <h1>Kynseed NPC Viewer</h1>
 
-<p>Select your <b>Slot1_Autosave.xml</b> file:</p>
-<input type="file" id="upload" accept=".xml">
+<!-- UPLOAD -->
+<p><b>Select your Slot1_Autosave.xml file:</b></p>
+<input id="upload" type="file" accept=".xml">
 
+
+<!-- FILTERS -->
+<div id="filters" style="margin-top:20px; margin-bottom:20px; display:none;">
+
+  <!-- Search -->
+  <input 
+    id="searchBox" 
+    type="text" 
+    placeholder="Search anything..." 
+    style="width:200px;"
+  >
+
+  <!-- Gender -->
+  <select id="genderFilter">
+    <option value="">Gender: All</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+  </select>
+
+  <!-- Min age -->
+  <input 
+    id="minAge" 
+    type="number" 
+    placeholder="Min Age" 
+    style="width:100px;"
+  >
+
+  <!-- Max age -->
+  <input 
+    id="maxAge" 
+    type="number" 
+    placeholder="Max Age" 
+    style="width:100px;"
+  >
+
+</div>
+
+
+<!-- TABLE -->
 <table id="npcTable" style="display:none;">
   <thead>
     <tr id="headerRow"></tr>
@@ -25,6 +93,14 @@
   <tbody id="tableBody"></tbody>
 </table>
 
+
 <script src="script.js"></script>
+<script>
+  // Show filters once file is loaded
+  document.getElementById("upload").addEventListener("change", () => {
+    document.getElementById("filters").style.display = "block";
+  });
+</script>
+
 </body>
 </html>
