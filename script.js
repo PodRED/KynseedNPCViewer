@@ -199,8 +199,6 @@ function applyFilters() {
     if (gender && npc.Gender !== gender) return false;
     if (!isNaN(minAge) && npc.Age < minAge) return false;
     if (!isNaN(maxAge) && npc.Age > maxAge) return false;
-
-    // NEW — Only match LikedItems text
     if (likedSearch && !npc.LikedItems.toLowerCase().includes(likedSearch)) return false;
 
     return true;
