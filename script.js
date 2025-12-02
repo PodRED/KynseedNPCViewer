@@ -208,7 +208,3 @@ function applyFilters() {
 
   buildTable(filtered);
 }
-
-
-  buildTable(filtered);
-}
