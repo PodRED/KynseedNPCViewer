@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   <title>Kynseed NPC Viewer</title>
 
-  <!-- External stylesheet -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- No external CSS for now -->
 </head>
 
 <body>
 
-<h1>Kynseed NPC Viewer v1.0</h1>
+<h1>Kynseed NPC Viewer</h1>
 
 <!-- FILE UPLOAD -->
-<p><b>Select your save file:</b></p>
+<p><b>Select your Slot1_Autosave.xml file:</b></p>
 <input id="upload" type="file" accept=".xml">
 
-<!-- FILTER BAR -->
-<div id="filters">
-  <input id="searchBox" type="text" placeholder="Search anything…" style="width:200px;">
-  
+<!-- FILTER BAR (HIDDEN UNTIL DATA LOADS) -->
+<div id="filters" style="display:none; margin-top:20px; margin-bottom:20px;">
+
+  <input id="searchBox" type="text" placeholder="Search…" style="width:200px;">
+
   <select id="genderFilter">
     <option value="">Gender: All</option>
     <option value="Male">Male</option>
@@ -28,17 +28,20 @@
 
   <input id="minAge" type="number" placeholder="Min Age" style="width:100px;">
   <input id="maxAge" type="number" placeholder="Max Age" style="width:100px;">
+
+  <!-- ⭐ NEW free-text Liked Item filter -->
+  <input id="likeFilter" type="text" placeholder="Liked item contains…" style="width:200px;">
+
 </div>
 
-<!-- NPC TABLE -->
-<table id="npcTable" style="display:none;">
+<!-- TABLE -->
+<table id="npcTable" style="display:none; width:100%; border-collapse:collapse;">
   <thead>
     <tr id="headerRow"></tr>
   </thead>
   <tbody id="tableBody"></tbody>
 </table>
 
-<!-- MAIN SCRIPT -->
 <script src="script.js"></script>
 
 </body>
