@@ -57,7 +57,10 @@ function processSave(xml) {
 
   buildTable(fullNPCList);
   setupFilters();
+
+  // Show table and filter bar now that data is ready
   document.getElementById("npcTable").style.display = "table";
+  document.getElementById("filters").style.display = "block";
 }
 
 
@@ -106,7 +109,7 @@ function extractNPC(npc, curYear) {
 
 
 //--------------------------------------------------
-// BUILD TABLE WITH SORT ICONS + STYLING
+// BUILD TABLE (SORT ICONS + BASIC STRUCTURE)
 //--------------------------------------------------
 
 function buildTable(data) {
@@ -120,13 +123,14 @@ function buildTable(data) {
 
   const columns = Object.keys(data[0]);
 
+  // HEADERS
   columns.forEach(col => {
     const th = document.createElement("th");
 
     let html = `<span>${col}</span>`;
 
     if (col === currentSortColumn) {
-      th.classList.add("sorted");
+      th.style.background = "#e6f0ff";
 
       if (currentSortDirection === 1) {
         html += `<svg width="10" height="10" style="margin-left:4px;"><polygon points="5,1 9,9 1,9" fill="black"/></svg>`;
@@ -141,6 +145,7 @@ function buildTable(data) {
     headerRow.appendChild(th);
   });
 
+  // ROWS
   data.forEach(npc => {
     const tr = document.createElement("tr");
 
@@ -174,7 +179,7 @@ function sortBy(data, key) {
 
 
 //--------------------------------------------------
-// FILTERING SYSTEM
+// FILTER SYSTEM
 //--------------------------------------------------
 
 function setupFilters() {
