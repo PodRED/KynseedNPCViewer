@@ -182,8 +182,7 @@ function setupFilters() {
   document.getElementById("genderFilter").addEventListener("change", applyFilters);
   document.getElementById("minAge").addEventListener("input", applyFilters);
   document.getElementById("maxAge").addEventListener("input", applyFilters);
-  document.getElementById("likedItemSearch").addEventListener("input", applyFilters);
-
+  document.getElementById("likedItemSearch").addEventListener("input", applyFilters); // NEW
 }
 
 function applyFilters() {
@@ -194,11 +193,12 @@ function applyFilters() {
   const likedSearch = document.getElementById("likedItemSearch").value.toLowerCase(); // NEW
 
   let filtered = fullNPCList.filter(npc => {
-
     if (search && !JSON.stringify(npc).toLowerCase().includes(search)) return false;
     if (gender && npc.Gender !== gender) return false;
     if (!isNaN(minAge) && npc.Age < minAge) return false;
     if (!isNaN(maxAge) && npc.Age > maxAge) return false;
+
+    // NEW: match only LikedItems
     if (likedSearch && !npc.LikedItems.toLowerCase().includes(likedSearch)) return false;
 
     return true;
