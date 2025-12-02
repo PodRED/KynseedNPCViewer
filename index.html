@@ -4,8 +4,7 @@
   <meta charset="utf-8">
   <title>Kynseed NPC Viewer</title>
 
-  <!-- External stylesheet -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- No external CSS for now -->
 </head>
 
 <body>
@@ -16,8 +15,8 @@
 <p><b>Select your save file:</b></p>
 <input id="upload" type="file" accept=".xml">
 
-<!-- FILTER BAR -->
-<div id="filters">
+<!-- FILTER BAR (HIDDEN BY DEFAULT) -->
+<div id="filters" style="display:none; margin-top:20px; margin-bottom:20px;">
   <input id="searchBox" type="text" placeholder="Search anything…" style="width:200px;">
   
   <select id="genderFilter">
@@ -30,15 +29,14 @@
   <input id="maxAge" type="number" placeholder="Max Age" style="width:100px;">
 </div>
 
-<!-- NPC TABLE -->
-<table id="npcTable" style="display:none;">
+<!-- TABLE -->
+<table id="npcTable" style="display:none; width:100%; border-collapse:collapse;">
   <thead>
     <tr id="headerRow"></tr>
   </thead>
   <tbody id="tableBody"></tbody>
 </table>
 
-<!-- MAIN SCRIPT -->
 <script src="script.js"></script>
 
 </body>
