@@ -52,7 +52,6 @@ document.getElementById("upload").addEventListener("change", async function () {
 function processSave(xml) {
   const npcs = [...xml.getElementsByTagName("GenerationsSimData")];
 
-  // Current date → needed for Age calculation
   const curYear = parseInt(xml.getElementsByTagName("CurrentYear")[0].textContent);
 
   let data = npcs
@@ -70,27 +69,22 @@ function processSave(xml) {
 function extractNPC(npc, curYear) {
   const get = tag => npc.getElementsByTagName(tag)[0]?.textContent || null;
 
-  // --- Birth ---
   const bd = npc.getElementsByTagName("Birthdate")[0];
   const byear = bd ? parseInt(bd.getElementsByTagName("year")[0].textContent) : null;
   const bseason = bd ? parseInt(bd.getElementsByTagName("season")[0].textContent) : null;
   const bday = bd ? parseInt(bd.getElementsByTagName("day")[0].textContent) : null;
 
-  // --- Death ---
   const dd = npc.getElementsByTagName("DeathDate")[0];
   const dy = dd ? parseInt(dd.getElementsByTagName("year")[0].textContent) : null;
   const ds = dd ? parseInt(dd.getElementsByTagName("season")[0].textContent) : null;
   const dday = dd ? parseInt(dd.getElementsByTagName("day")[0].textContent) : null;
 
-  // --- Ages ---
   const age = byear != null ? curYear - byear : null;
   const deathAge = dy != null ? dy - byear : null;
 
-  // --- Likes ---
   const likeNodes = npc.getElementsByTagName("Likes")[0]?.getElementsByTagName("int") || [];
   const likes = [...likeNodes].map(x => itemMap[parseInt(x.textContent)] || x.textContent);
 
-  // --- Dislikes ---
   const hateNodes = npc.getElementsByTagName("Hates")[0]?.getElementsByTagName("int") || [];
   const hates = [...hateNodes].map(x => itemMap[parseInt(x.textContent)] || x.textContent);
 
@@ -127,17 +121,15 @@ function buildTable(data) {
 
   const columns = Object.keys(data[0]);
 
-  // Build header with sort arrows
   columns.forEach(col => {
     const th = document.createElement("th");
 
-    // Pick correct icon
     let icon = "";
     if (col === currentSortColumn) {
       icon = currentSortDirection === 1 ? " ▲" : " ▼";
     }
 
-    th.textContent = col + icon;
+    th.innerHTML = col + icon;
 
     th.onclick = () => {
       sortBy(data, col);
@@ -146,7 +138,6 @@ function buildTable(data) {
     headerRow.appendChild(th);
   });
 
-  // Build rows
   data.forEach(npc => addRow(body, npc, columns));
 }
 
@@ -169,21 +160,17 @@ function addRow(body, npc, columns) {
 
 
 //--------------------------------------------------
-// SORTING (with ascending/descending toggle)
+// SORT LOGIC WITH DIRECTION TOGGLE
 //--------------------------------------------------
 
 function sortBy(data, key) {
-
   if (key === currentSortColumn) {
-    // toggle direction
     currentSortDirection *= -1;
   } else {
-    // new column defaults to ascending
     currentSortColumn = key;
     currentSortDirection = 1;
   }
 
-  // actual sorting
   data.sort((a, b) => {
     const valA = a[key] ?? "";
     const valB = b[key] ?? "";
