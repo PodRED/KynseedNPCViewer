@@ -8,7 +8,7 @@ let currentSortDirection = 1; // 1 = ascending, -1 = descending
 
 
 //--------------------------------------------------
-// LOAD ITEM LIST
+// LOAD ITEM LIST (EAItems.txt)
 //--------------------------------------------------
 
 async function loadItemList() {
@@ -46,7 +46,7 @@ document.getElementById("upload").addEventListener("change", async function () {
 
 
 //--------------------------------------------------
-// PROCESS SAVE XML
+// PROCESS SAVE XML DATA
 //--------------------------------------------------
 
 function processSave(xml) {
@@ -63,7 +63,7 @@ function processSave(xml) {
 
 
 //--------------------------------------------------
-// EXTRACT NPC DATA
+// EXTRACT NPC DETAILS INTO JS OBJECT
 //--------------------------------------------------
 
 function extractNPC(npc, curYear) {
@@ -107,7 +107,7 @@ function extractNPC(npc, curYear) {
 
 
 //--------------------------------------------------
-// BUILD TABLE (with sort icons)
+// BUILD TABLE WITH SVG SORT ARROWS
 //--------------------------------------------------
 
 function buildTable(data) {
@@ -124,20 +124,33 @@ function buildTable(data) {
   columns.forEach(col => {
     const th = document.createElement("th");
 
-    let icon = "";
+    // Base column label
+    let html = `<span>${col}</span>`;
+
+    // Add sortable icon (SVG)
     if (col === currentSortColumn) {
-      icon = currentSortDirection === 1 ? " ▲" : " ▼";
+      if (currentSortDirection === 1) {
+        // ASCENDING ▲
+        html += `
+          <svg width="10" height="10" style="margin-left:4px; vertical-align:middle;">
+            <polygon points="5,1 9,9 1,9" fill="black"/>
+          </svg>`;
+      } else {
+        // DESCENDING ▼
+        html += `
+          <svg width="10" height="10" style="margin-left:4px; vertical-align:middle;">
+            <polygon points="1,1 9,1 5,9" fill="black"/>
+          </svg>`;
+      }
     }
 
-    th.innerHTML = col + icon;
+    th.innerHTML = html;
 
-    th.onclick = () => {
-      sortBy(data, col);
-    };
-
+    th.onclick = () => sortBy(data, col);
     headerRow.appendChild(th);
   });
 
+  // Rows
   data.forEach(npc => addRow(body, npc, columns));
 }
 
@@ -160,23 +173,23 @@ function addRow(body, npc, columns) {
 
 
 //--------------------------------------------------
-// SORT LOGIC WITH DIRECTION TOGGLE
+// SORTING WITH STATE + ICON UPDATE
 //--------------------------------------------------
 
 function sortBy(data, key) {
   if (key === currentSortColumn) {
-    currentSortDirection *= -1;
+    currentSortDirection *= -1;  // toggle direction
   } else {
     currentSortColumn = key;
-    currentSortDirection = 1;
+    currentSortDirection = 1;    // default ascending
   }
 
   data.sort((a, b) => {
-    const valA = a[key] ?? "";
-    const valB = b[key] ?? "";
+    const A = a[key] ?? "";
+    const B = b[key] ?? "";
 
-    if (valA > valB) return 1 * currentSortDirection;
-    if (valA < valB) return -1 * currentSortDirection;
+    if (A > B) return 1 * currentSortDirection;
+    if (A < B) return -1 * currentSortDirection;
     return 0;
   });
 
