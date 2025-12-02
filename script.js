@@ -4,11 +4,12 @@
 
 let itemMap = {};
 let currentSortColumn = null;
-let currentSortDirection = 1; // 1 = ascending, -1 = descending
+let currentSortDirection = 1;
+let fullNPCList = []; // store original data for filtering
 
 
 //--------------------------------------------------
-// LOAD ITEM LIST (EAItems.txt)
+// LOAD ITEM LIST
 //--------------------------------------------------
 
 async function loadItemList() {
@@ -27,7 +28,7 @@ async function loadItemList() {
 
 
 //--------------------------------------------------
-// HANDLE SAVE FILE UPLOAD
+// READ SAVE FILE
 //--------------------------------------------------
 
 document.getElementById("upload").addEventListener("change", async function () {
@@ -46,24 +47,24 @@ document.getElementById("upload").addEventListener("change", async function () {
 
 
 //--------------------------------------------------
-// PROCESS SAVE XML DATA
+// PARSE SAVE XML
 //--------------------------------------------------
 
 function processSave(xml) {
   const npcs = [...xml.getElementsByTagName("GenerationsSimData")];
-
   const curYear = parseInt(xml.getElementsByTagName("CurrentYear")[0].textContent);
 
-  let data = npcs
+  fullNPCList = npcs
     .filter(n => n.getElementsByTagName("IsDead")[0]?.textContent !== "true")
     .map(npc => extractNPC(npc, curYear));
 
-  buildTable(data);
+  buildTable(fullNPCList);
+  setupFilters();
 }
 
 
 //--------------------------------------------------
-// EXTRACT NPC DETAILS INTO JS OBJECT
+// EXTRACT NPC INTO OBJECT
 //--------------------------------------------------
 
 function extractNPC(npc, curYear) {
@@ -107,7 +108,7 @@ function extractNPC(npc, curYear) {
 
 
 //--------------------------------------------------
-// BUILD TABLE WITH SVG SORT ARROWS
+// BUILD TABLE WITH SVG SORT ICONS
 //--------------------------------------------------
 
 function buildTable(data) {
@@ -119,24 +120,23 @@ function buildTable(data) {
   headerRow.innerHTML = "";
   body.innerHTML = "";
 
+  if (!data.length) return;
+
   const columns = Object.keys(data[0]);
 
+  // Headers + Sort Icons
   columns.forEach(col => {
     const th = document.createElement("th");
 
-    // Base column label
     let html = `<span>${col}</span>`;
 
-    // Add sortable icon (SVG)
     if (col === currentSortColumn) {
       if (currentSortDirection === 1) {
-        // ASCENDING ▲
         html += `
           <svg width="10" height="10" style="margin-left:4px; vertical-align:middle;">
             <polygon points="5,1 9,9 1,9" fill="black"/>
           </svg>`;
       } else {
-        // DESCENDING ▼
         html += `
           <svg width="10" height="10" style="margin-left:4px; vertical-align:middle;">
             <polygon points="1,1 9,1 5,9" fill="black"/>
@@ -145,12 +145,10 @@ function buildTable(data) {
     }
 
     th.innerHTML = html;
-
     th.onclick = () => sortBy(data, col);
     headerRow.appendChild(th);
   });
 
-  // Rows
   data.forEach(npc => addRow(body, npc, columns));
 }
 
@@ -173,25 +171,61 @@ function addRow(body, npc, columns) {
 
 
 //--------------------------------------------------
-// SORTING WITH STATE + ICON UPDATE
+// SORTING
 //--------------------------------------------------
 
 function sortBy(data, key) {
   if (key === currentSortColumn) {
-    currentSortDirection *= -1;  // toggle direction
+    currentSortDirection *= -1;
   } else {
     currentSortColumn = key;
-    currentSortDirection = 1;    // default ascending
+    currentSortDirection = 1;
   }
 
   data.sort((a, b) => {
     const A = a[key] ?? "";
     const B = b[key] ?? "";
-
     if (A > B) return 1 * currentSortDirection;
     if (A < B) return -1 * currentSortDirection;
     return 0;
   });
 
   buildTable(data);
+}
+
+
+//--------------------------------------------------
+// FILTERING LOGIC
+//--------------------------------------------------
+
+function setupFilters() {
+  document.getElementById("searchBox").addEventListener("input", applyFilters);
+  document.getElementById("genderFilter").addEventListener("change", applyFilters);
+  document.getElementById("minAge").addEventListener("input", applyFilters);
+  document.getElementById("maxAge").addEventListener("input", applyFilters);
+}
+
+function applyFilters() {
+  const search = document.getElementById("searchBox").value.toLowerCase();
+  const gender = document.getElementById("genderFilter").value;
+  const minAge = parseInt(document.getElementById("minAge").value);
+  const maxAge = parseInt(document.getElementById("maxAge").value);
+
+  let filtered = fullNPCList.filter(npc => {
+    // Search text match
+    if (search && !JSON.stringify(npc).toLowerCase().includes(search)) return false;
+
+    // Gender
+    if (gender && npc.Gender !== gender) return false;
+
+    // Min age
+    if (!isNaN(minAge) && (npc.Age == null || npc.Age < minAge)) return false;
+
+    // Max age
+    if (!isNaN(maxAge) && (npc.Age == null || npc.Age > maxAge)) return false;
+
+    return true;
+  });
+
+  buildTable(filtered);
 }
