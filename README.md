@@ -1,4 +1,4 @@
-A save file inspector for **[Kynseed]([https://eff.org](https://kynseed.com/))** by Pixelcount Studios.
+A save file inspector for [Kynseed](https://kynseed.com/) by Pixelcount Studios.
 
 Pulls information for all currently living NPCs from your save file.
 
